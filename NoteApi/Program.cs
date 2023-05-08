@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using NoteApi;
+using NoteApi.DataStores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<INoteDictionary, DatabaseNoteDictionary>();
+builder.Services.AddTransient<INoteDictionary, EFNoteDictionary>();
+builder.Services.AddDbContext<AppDbContext>(
+    ( options) =>
+        options.UseMySql(
+            builder.Configuration.GetConnectionString("Default")!,
+            MariaDbServerVersion.LatestSupportedServerVersion
+        )
+);
 
 var app = builder.Build();
 

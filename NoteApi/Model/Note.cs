@@ -1,9 +1,20 @@
-namespace NoteApi.Model;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
+namespace NoteApi.Model;
+[Table("Notes")]
 public class Note
 {
-    public Guid ID { get; private set; }
-    public NoteContent Content { get; set; }
+    [Key]
+    public Guid ID { get;  set; }
+
+    public NoteContent Content { get; set; } = new NoteContent();
+
+    public Note()
+    {
+        
+    }
 
     public Note(NoteContent content)
     {
@@ -24,8 +35,11 @@ public class Note
     }
 }
 
+[Owned]
 public class NoteContent
 {
+    [Required]
     public string Name { get; set; } = string.Empty;
+    [Required]
     public string Content { get; set; } = string.Empty;
 }
