@@ -9,7 +9,7 @@ public interface INoteDictionary
     public Task Add(Guid id, Note? note);
     public Task Add(Note? note);
     public Task<bool> Remove(Guid id);
-    public Task<bool> Update(Guid id, NoteContent content);
+    public Task<bool> Update(Guid id, String name, String content);
 
     public IAsyncEnumerable<Note?> GetAll();
 }
@@ -27,7 +27,7 @@ public class NoteDictionary : INoteDictionary
 
     public Task Add(Note? note)
     {
-        _notes.Add(note.ID, note);
+        _notes.Add(note.guid, note);
         return Task.CompletedTask;
     }
 
@@ -46,11 +46,12 @@ public class NoteDictionary : INoteDictionary
         }
     }
 
-    public Task<bool> Update(Guid id, NoteContent content)
+    public Task<bool> Update(Guid id, String name, String content)
     {
         var note = _notes.GetValueOrDefault(id, null);
         if (note == null) return Task.FromResult(false);
-        note.Content = content;
+        note.title = name;
+        note.content = content;
         return Task.FromResult(true);
     }
 }

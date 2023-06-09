@@ -12,7 +12,7 @@ public class EFNoteDictionary : INoteDictionary
     }
     public Task<Note?> Get(Guid id)
     {
-        return _context.Notes.Where(x => x.ID == id).FirstOrDefaultAsync();
+        return _context.Notes.Where(x => x.guid == id).FirstOrDefaultAsync();
     }
 
     public async Task Add(Guid id, Note? note)
@@ -25,21 +25,21 @@ public class EFNoteDictionary : INoteDictionary
     public Task Add(Note? note)
     {
         if (note is null) throw new ArgumentNullException(nameof(note));
-        return Add(note.ID, note);
+        return Add(note.guid, note);
     }
 
     public async Task<bool> Remove(Guid id)
     {
-        var note = await _context.Notes.Where(x => x.ID == id).FirstOrDefaultAsync();
+        var note = await _context.Notes.Where(x => x.guid == id).FirstOrDefaultAsync();
         if (note is null) return false;
         _context.Notes.Remove(note);
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<bool> Update(Guid id, NoteContent content)
+    public async Task<bool> Update(Guid id, String name, String content)
     {
-        var newNote = new Note(id, content);
+        var newNote = new Note(id, name, content);
         _context.Notes.Update(newNote);
         await _context.SaveChangesAsync();
         return true;

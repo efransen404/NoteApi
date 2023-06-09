@@ -23,11 +23,11 @@ public class NoteController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<Guid> CreateNote(NoteContent content)
+    public async Task<Guid> CreateNote(string title, string content)
     {
-        Note? note = new Note(content);
+        Note? note = new Note(title, content);
         await _notes.Add(note);
-        return note.ID;
+        return note.guid;
     }
     
     [HttpDelete]
@@ -48,9 +48,9 @@ public class NoteController : ControllerBase
 
     [HttpPut]
     [Route("{id}")]
-    public async Task<ActionResult> UpdateNote(Guid id, NoteContent content)
+    public async Task<ActionResult> UpdateNote(Guid id, String title, String content)
     {
-        bool result = await _notes.Update(id, content);
+        bool result = await _notes.Update(id, title, content);
         if (!result) return NotFound();
         return Ok();
     }

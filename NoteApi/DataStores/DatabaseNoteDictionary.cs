@@ -24,7 +24,7 @@ public class DatabaseNoteDictionary : INoteDictionary
             var readID = reader.GetGuid(0);
             var readName = reader.GetString(1);
             var readContent = reader.GetString(2);
-            return new Note(readID, new NoteContent { Name = readName, Content = readContent });
+            return new Note(readID, readName, readContent);
         }
         else
         {
@@ -38,14 +38,14 @@ public class DatabaseNoteDictionary : INoteDictionary
         await using var cmd = new MySqlCommand("INSERT INTO Notes(ID, Name, Content) VALUES (@id, @name, @content)", connection);
         await cmd.PrepareAsync();
         cmd.Parameters.AddWithValue("@id", id);
-        cmd.Parameters.AddWithValue("@name", note.Content.Name);
-        cmd.Parameters.AddWithValue("@content", note.Content.Content);
+        cmd.Parameters.AddWithValue("@name", note.title);
+        cmd.Parameters.AddWithValue("@content", note.content);
         await cmd.ExecuteNonQueryAsync();
     }
 
     public async Task Add(Note? note)
     {
-        await Add(note.ID, note);
+        await Add(note.guid, note);
     }
 
     public async Task<bool> Remove(Guid id)
@@ -59,16 +59,16 @@ public class DatabaseNoteDictionary : INoteDictionary
         
     }
 
-    public async Task<bool> Update(Guid id, NoteContent content)
+    public async Task<bool> Update(Guid id, string title, string content)
     {
         await using var connection = CreateConnection();
         await connection.OpenAsync();
-        await using var cmd = new MySqlCommand("UPDATE Notes SET Name = @name, Content = @content WHERE ID = @id",
+        await using var cmd = new MySqlCommand("UPDATE Notes SET Name = @name, Content = @content where ID = @id",
             connection);
         await cmd.PrepareAsync();
         cmd.Parameters.AddWithValue("@id", id);
-        cmd.Parameters.AddWithValue("@name", content.Name);
-        cmd.Parameters.AddWithValue("@content", content.Content);
+        cmd.Parameters.AddWithValue("@name", title);
+        cmd.Parameters.AddWithValue("@content", content);
         return await cmd.ExecuteNonQueryAsync() > 0;
     }
 
@@ -83,7 +83,7 @@ public class DatabaseNoteDictionary : INoteDictionary
             var readID = reader.GetGuid(0);
             var readName = reader.GetString(1);
             var readContent = reader.GetString(2);
-            yield return new Note(readID, new NoteContent { Name = readName, Content = readContent });
+            yield return new Note(readID, readName, readContent);
         }
     }
 }

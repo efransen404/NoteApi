@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 
 namespace NoteApi.Model;
@@ -7,39 +8,28 @@ namespace NoteApi.Model;
 public class Note
 {
     [Key]
-    public Guid ID { get;  set; }
-
-    public NoteContent Content { get; set; } = new NoteContent();
+    public Guid guid { get;  set; }
+    [Required]
+    public String title { get; set; }
+    [Required]
+    public String content { get; set; }
 
     public Note()
     {
         
     }
 
-    public Note(NoteContent content)
-    {
-        ID = Guid.NewGuid();
-        Content = content;
-    }
-
     public Note(string name, string content)
     {
-        ID = Guid.NewGuid();
-        Content = new NoteContent { Name = name, Content = content };
+        guid = Guid.NewGuid();
+        title = name;
+        this.content = content;
     }
 
-    public Note(Guid id, NoteContent content)
+    public Note(Guid guid, string name, string content)
     {
-        ID = id;
-        Content = content;
+        this.guid = guid;
+        title = name;
+        this.content = content;
     }
-}
-
-[Owned]
-public class NoteContent
-{
-    [Required]
-    public string Name { get; set; } = string.Empty;
-    [Required]
-    public string Content { get; set; } = string.Empty;
 }
